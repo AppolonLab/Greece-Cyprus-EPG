@@ -37,9 +37,13 @@ def fetch(key, url):
     xml = gzip.decompress(payload)
     if len(xml) > 200_000_000:
         raise ValueError(f'{key}: XML decompressed size exceeds limit')
-    if not xml.lstrip().startswith((b'<?xml', b'<tv')):
-        raise ValueError(f'{key}: not XMLTV')
-    root = ET.fromstring(xml)
+    # Parse the actual XML instead of checking its first bytes.
+    # EPGShare01 files may start with a UTF-8 BOM (EF BB BF),
+    # which is valid XML but fails a startswith('<?xml') test.
+    try:
+        root = ET.fromstring(xml)
+    except ET.ParseError as exc:
+        raise ValueError(f'{key}: invalid XMLTV XML: {exc}') from exc
     if root.tag != 'tv':
         raise ValueError(f'{key}: not XMLTV tv root')
     channel_count = len(root.findall('channel'))
