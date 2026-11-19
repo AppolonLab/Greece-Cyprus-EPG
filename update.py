@@ -59,6 +59,44 @@ def fetch(key, url):
     print(f'{key}: {channel_count} channels, {program_count} events, {len(payload)} compressed bytes')
     return payload
 
+def publish_iptv_xmltv(downloaded):
+    """Publish a combined XMLTV feed for IPTV players such as TiviMate.
+
+    Preserve original channel IDs so tvg-id matching works. If a channel ID
+    occurs in both feeds, prefer GR to avoid duplicate XMLTV channel IDs.
+    """
+    roots = {}
+    for key, blob in downloaded.items():
+        roots[key] = ET.fromstring(gzip.decompress(blob))
+    combined = ET.Element('tv', {'generator-info-name': 'Greece-Cyprus-EPG'})
+    seen = set()
+    for key in FEEDS:
+        for ch in roots[key].findall('channel'):
+            cid = ch.get('id')
+            if cid and cid not in seen:
+                seen.add(cid)
+                combined.append(ch)
+    gr_ids = {ch.get('id') for ch in roots['GR'].findall('channel')}
+    counts = {}
+    for key in FEEDS:
+        n = 0
+        for event in roots[key].findall('programme'):
+            if event.get('channel') in seen:
+                # Duplicate entries from a second feed are harmless for
+                # different channels, but skip duplicate channel IDs entirely.
+                if key != 'GR' and event.get('channel') in gr_ids:
+                    continue
+                combined.append(event)
+                n += 1
+        counts[key] = n
+    xml = ET.tostring(combined, encoding='utf-8', xml_declaration=True)
+    output = SITE / 'epg.xml.gz'
+    tmp = SITE / 'epg.xml.gz.tmp'
+    with gzip.open(tmp, 'wb', compresslevel=6) as f:
+        f.write(xml)
+    os.replace(tmp, output)
+    print('IPTV XMLTV published:', output, len(seen), 'channels,', sum(counts.values()), 'programmes')
+
 def main():
     # Download and validate BOTH feeds before replacing ANY local source.
     downloaded = {k: fetch(k, url) for k, url in FEEDS.items()}
@@ -69,7 +107,7 @@ def main():
             modified = True
     # Always rebuild on a new calendar day, even if feeds unexpectedly remain unchanged.
     stamp_path = DATA / 'build_date.txt'
-    if stamp_path.exists() and stamp_path.read_text().strip() == NOW.strftime('%Y-%m-%d') and not modified and (SITE/'index.html').exists():
+    if stamp_path.exists() and stamp_path.read_text().strip() == NOW.strftime('%Y-%m-%d') and not modified and (SITE/'index.html').exists() and (SITE/'epg.xml.gz').exists():
         print('No XMLTV changes; same calendar day. Skipping rebuild.')
         return
     for key, blob in downloaded.items():
@@ -80,6 +118,7 @@ def main():
     subprocess.run([sys.executable, str(ROOT/'build_epg.py')], check=True, cwd=ROOT)
     if not (SITE/'index.html').exists() or (SITE/'index.html').stat().st_size < 20000:
         raise ValueError('Failed to build a valid EPG page')
+    publish_iptv_xmltv(downloaded)
     stamp_path.write_text(NOW.strftime('%Y-%m-%d'))
     (SITE/'status.json').write_text(json.dumps({
         'last_successful_update': NOW.isoformat(), 'source': 'EPGShare01',
