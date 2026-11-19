@@ -74,6 +74,34 @@ PAGE=r'''<!doctype html><html lang="el"><head><meta charset="utf-8"><meta name="
 <style>
 :root{font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif;color-scheme:dark;background:#0b1220;color:#e9f1fb;--bg:#111e30;--panel:#17253b;--line:#35445b;--muted:#9ab0c9;--accent:#54c5e2}
 *{box-sizing:border-box}body{margin:0;padding:16px;max-width:1800px;margin-inline:auto}h1{font-size:clamp(20px,3vw,30px);margin:0 0 4px}.small{font-size:12px;color:var(--muted)}.toolbar{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin:16px 0}.tool{background:var(--panel);color:inherit;border:1px solid var(--line);border-radius:9px;padding:9px 11px;font-size:13px;max-width:100%}select,button,input{font:inherit}button{cursor:pointer}button:hover{border-color:var(--accent)}input{min-width:130px}.tabs{display:flex;gap:5px;flex-wrap:wrap}.tabs button{border:1px solid var(--line);color:inherit;background:var(--bg);border-radius:8px;padding:8px 10px;font-size:12px}.tabs button.active{background:#13516b;border-color:#56bed5}.metrics{display:flex;flex-wrap:wrap;gap:10px;color:var(--muted);font-size:12px;padding:8px 0}.board{border:1px solid var(--line);border-radius:12px;overflow:auto;height:min(67vh,760px);position:relative;background:var(--bg)}.wide{width:calc(190px + 2640px);position:relative}.timeline-head{display:flex;position:sticky;top:0;z-index:10;background:#17283e;height:55px;border-bottom:1px solid var(--line)}.station{width:190px;flex:none;position:sticky;left:0;z-index:3;background:#14243a;border-right:1px solid var(--line);padding:9px 11px;display:flex;flex-direction:column;justify-content:center;gap:4px}.timeline-head .station{z-index:12}.station strong{font-size:12px;max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.station small{font-size:10px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.hours{display:flex;width:2640px;flex:none;position:relative}.hour{width:110px;flex:none;padding:13px 6px;color:#c6d6e8;font-size:12px;border-left:1px solid var(--line)}.end-mark{position:absolute;left:2537px;top:4px;background:#22445b;border-radius:5px;padding:4px 7px;font-size:11px;white-space:nowrap;color:#f4fbff}.row{display:flex;height:62px;border-bottom:1px solid #2c3b50}.track{flex:none;width:2640px;position:relative;background:repeating-linear-gradient(90deg,transparent 0,transparent 109px,#28384f 109px,#28384f 110px)}.event{position:absolute;top:6px;height:49px;padding:5px 7px;border-radius:5px;border:1px solid #5192b6;background:#1c4868;color:#edf8ff;text-align:left;overflow:hidden;font-size:11px}.event:nth-of-type(2n){background:#215c54;border-color:#4a9a83}.event.film{background:#643750;border-color:#ae7089}.event.doc{background:#205e4e;border-color:#499e83}.event.sport{background:#513b76;border-color:#8b70b9}.event.kids{background:#64521a;border-color:#bba14c}.event.music{background:#58436a;border-color:#ae87d1}.event.news{background:#60502e;border-color:#aa9062}.event strong{font-size:11px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.event small{display:block;font-size:10px;opacity:.8;margin-top:3px;white-space:nowrap}.void{color:#718aa8;font-size:11px;position:absolute;left:10px;top:21px}.card{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:12px 15px;margin-top:12px;min-height:90px}.card a{color:#74daf4}.legend{display:flex;flex-wrap:wrap;gap:12px;margin:12px 0;font-size:12px;color:var(--muted)}.swatch{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px}.footer{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.55}.status{color:#9fe0ad}.err{color:#ffb0a7}@media(max-width:620px){body{padding:9px}.toolbar{gap:6px}.station{width:155px}.wide{width:2795px}.board{height:68vh}.tool{font-size:12px;padding:8px}.station strong{font-size:11px}} 
+
+/* Improved title readability on mobile and desktop */
+.row{height:96px}
+.event{top:7px;height:81px;padding:8px 9px;overflow:hidden;transition:box-shadow .15s ease}
+.event strong{
+  font-size:12px;line-height:1.25;display:-webkit-box;
+  -webkit-box-orient:vertical;-webkit-line-clamp:3;
+  white-space:normal;overflow:hidden;text-overflow:clip;
+  overflow-wrap:anywhere
+}
+.event small{margin-top:5px;white-space:normal}
+.event.expanded{
+  width:max-content!important;min-width:240px;
+  max-width:min(85vw,560px);height:auto;min-height:81px;
+  max-height:260px;overflow:auto;z-index:8;
+  box-shadow:0 10px 28px #000b;border-width:2px
+}
+.event.expanded strong{
+  display:block;white-space:normal;overflow:visible;
+  -webkit-line-clamp:unset;overflow-wrap:anywhere
+}
+.event:focus-visible{outline:2px solid #fff;outline-offset:1px}
+@media(max-width:620px){
+  .row{height:104px}
+  .event{height:89px}
+  .event.expanded{max-width:calc(100vw - 35px)}
+}
+
 </style></head><body><h1>📺 EPG Ελλάδας & Κύπρου</h1>
 <div class="small">Αυτόματα ανανεούμενος οδηγός από EPGShare01 GR1 και CY1 · πραγματικοί τίτλοι, ώρες έναρξης και λήξης · ζώνη ώρας Europe/Athens</div>
 <div class="toolbar">
@@ -89,7 +117,7 @@ PAGE=r'''<!doctype html><html lang="el"><head><meta charset="utf-8"><meta name="
 <div class="board" id="board" tabindex="0"><div class="wide"><div class="timeline-head"><div class="station"><strong>Κανάλι</strong><small id="leftDate">Ημερομηνία</small></div><div class="hours" id="hours"></div></div><div id="rows"></div></div></div>
 <div class="card" id="detail"><strong>Πάτησε μία εκπομπή.</strong><p class="small">Θα εμφανιστούν ώρα έναρξης, ώρα λήξης και περιγραφή, όπως περιέχονται στο αρχείο XMLTV.</p></div>
 <div class="legend"><span><i class="swatch" style="background:#643750"></i>Ταινίες</span><span><i class="swatch" style="background:#205e4e"></i>Ντοκιμαντέρ</span><span><i class="swatch" style="background:#513b76"></i>Αθλητικά</span><span><i class="swatch" style="background:#64521a"></i>Παιδικά</span><span><i class="swatch" style="background:#58436a"></i>Μουσική</span><span><i class="swatch" style="background:#60502e"></i>Ειδήσεις</span></div>
-<div class="footer">Πηγή: τα τοπικά αντίγραφα EPGShare01 GR1 / CY1 που ανέβασες. Τα δεδομένα ενσωματώνονται στο HTML κατά την τελευταία επιτυχή ενημέρωση. Οι ώρες είναι μετατρεμμένες στη ζώνη Ελλάδας/Κύπρου και τα δεδομένα αφορούν τις 8–10 Νοεμβρίου 2026· για επόμενες ημέρες χρειάζονται νέα XMLTV. Φίλτρο παρόχου: ασφαλής κατηγοριοποίηση από την ονομασία καναλιού, όχι πιστοποιημένη λίστα δικαιωμάτων συνδρομής. Ομοειδή ονόματα με διαφορετικό πρόγραμμα διατηρούνται χωριστά, γιατί ενδέχεται να είναι διαφορετικές ροές.</div>
+<div class="footer">Πηγή: τα τοπικά αντίγραφα EPGShare01 GR1 / CY1 που ανέβασες. Τα δεδομένα ενσωματώνονται στο HTML κατά την τελευταία επιτυχή ενημέρωση. Οι ώρες είναι μετατρεμμένες στη ζώνη Ελλάδας/Κύπρου και οι διαθέσιμες ημερομηνίες προκύπτουν από την τελευταία επιτυχή ενημέρωση XMLTV. Φίλτρο παρόχου: ασφαλής κατηγοριοποίηση από την ονομασία καναλιού, όχι πιστοποιημένη λίστα δικαιωμάτων συνδρομής. Ομοειδή ονόματα με διαφορετικό πρόγραμμα διατηρούνται χωριστά, γιατί ενδέχεται να είναι διαφορετικές ροές.</div>
 <script>const DATA=__DATA__;
 const base=__BASE__;
 const DAY_OFFSETS=__DAY_OFFSETS__;
@@ -102,7 +130,19 @@ function render(){const start=DAY_OFFSETS[dateIndex],end=DAY_OFFSETS[dateIndex+1
 visible=DATA.filter(c=>(country==='all'||c[2]===country)&&(p==='all'||c[3]===p)&&(genre==='all'||c[4]===genre)&&(!q||(c[1]+' '+c[0]).toLocaleLowerCase('el').includes(q))&&(!hide||c[5].some(e=>e[0]<end&&e[1]>start)));
 const holder=$('rows');holder.replaceChildren();let evcount=0,fully=0;const fragment=document.createDocumentFragment();
 for(const c of visible){const matches=c[5].filter(e=>e[0]<end&&e[1]>start);evcount+=matches.length;const row=document.createElement('div');row.className='row';const station=document.createElement('div');station.className='station';const name=document.createElement('strong');name.textContent=c[1];name.title=c[0];const sub=document.createElement('small');sub.textContent=c[2]+' · '+(c[3]==='GR'||c[3]==='CY'?'Θεματικό / ελεύθερο':c[3])+(c[6].length?' · '+(c[6].length+1)+' ισοδύναμες εγγραφές':'');station.append(name,sub);const tr=document.createElement('div');tr.className='track';let covered=[];
-for(const e of matches){const a=clamp(e[0],start,end),b=clamp(e[1],start,end);if(b<=a)continue;covered.push([a,b]);const btn=document.createElement('button');btn.className='event '+c[4];btn.style.left=((a-start)/1440*2640+1)+'px';btn.style.width=Math.max(3,((b-a)/1440*2640-2))+'px';btn.title=fmtTime(e[0])+'–'+fmtTime(e[1])+' '+e[2];const t=document.createElement('strong');t.textContent=e[2]||'Χωρίς τίτλο';const sm=document.createElement('small');sm.textContent=fmtTime(e[0])+'–'+fmtTime(e[1]);btn.append(t,sm);btn.addEventListener('click',()=>show(e,c));tr.appendChild(btn)}
+for(const e of matches){const a=clamp(e[0],start,end),b=clamp(e[1],start,end);if(b<=a)continue;covered.push([a,b]);const btn=document.createElement('button');btn.className='event '+c[4];btn.style.left=((a-start)/1440*2640+1)+'px';btn.style.width=Math.max(3,((b-a)/1440*2640-2))+'px';btn.title=fmtTime(e[0])+'–'+fmtTime(e[1])+' '+e[2];const t=document.createElement('strong');t.textContent=e[2]||'Χωρίς τίτλο';const sm=document.createElement('small');sm.textContent=fmtTime(e[0])+'–'+fmtTime(e[1]);btn.append(t,sm);btn.setAttribute('aria-expanded','false');
+btn.addEventListener('click',()=>{
+ const wasExpanded=btn.classList.contains('expanded');
+ document.querySelectorAll('.event.expanded').forEach(el=>{
+   el.classList.remove('expanded');
+   el.setAttribute('aria-expanded','false');
+ });
+ if(!wasExpanded){
+   btn.classList.add('expanded');
+   btn.setAttribute('aria-expanded','true');
+ }
+ show(e,c);
+});tr.appendChild(btn)}
 covered.sort((a,b)=>a[0]-b[0]);let total=0,last=start;for(const [a,b] of covered){total+=Math.max(0,b-Math.max(last,a));last=Math.max(last,b)}if(total>=1400)fully++;
 if(!matches.length){const blank=document.createElement('span');blank.className='void';blank.textContent='Δεν υπάρχει πρόγραμμα στο XMLTV για αυτή την ημέρα';tr.appendChild(blank)}row.append(station,tr);fragment.appendChild(row)}holder.appendChild(fragment);
 $('count').textContent=visible.length+' κανάλια · '+evcount+' εκπομπές · '+fully+' με ≥23ω20λ κάλυψη';$('range').textContent=fmtDate(start)+' 00:00 → '+fmtDate(end)+' 00:00';$('leftDate').textContent=fmtDate(start)+' 00:00';
