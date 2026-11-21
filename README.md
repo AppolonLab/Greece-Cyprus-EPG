@@ -1,11 +1,27 @@
-# Greece-Cyprus-EPG
-Automatic IPTV EPG for Greece and Cyprus
-# 📺 Greece & Cyprus EPG
+📺 Greece & Cyprus EPG
 
-**EPG URL για IPTV Players:**
+Powered by AppolonLab
 
-https://vaggeliszmp73.github.io/Greece-Cyprus-EPG/epg.xml.gz
+Αυτόματος ηλεκτρονικός τηλεοπτικός οδηγός (EPG) για κανάλια Ελλάδας και Κύπρου.
 
-**Διαδραστικός τηλεοπτικός οδηγός:**
+📡 EPG URL για IPTV Players
 
-https://vaggeliszmp73.github.io/Greece-Cyprus-EPG/
+https://appolonlab.github.io/Greece-Cyprus-EPG/epg.xml.gz
+
+Σύνδεσμος XMLTV για συμβατούς IPTV Players.
+
+📺 Διαδραστικός τηλεοπτικός οδηγός
+
+https://appolonlab.github.io/Greece-Cyprus-EPG/
+
+Οριζόντιος τηλεοπτικός οδηγός με χρονοδιάγραμμα εκπομπών και φίλτρα καναλιών.
+
+⚙️ Αυτόματη ενημέρωση
+
+Η δημιουργία και δημοσίευση του EPG πραγματοποιείται μέσω GitHub Actions, με βάση τα διαθέσιμα δεδομένα τηλεοπτικού προγράμματος.
+
+Η πληρότητα εξαρτάται από τη διαθεσιμότητα και την εγκυρότητα των πηγών.
+
+---
+
+AppolonLab — Knowledge · Technology · Creation
